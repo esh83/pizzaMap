@@ -40,6 +40,12 @@ Node *KdTree::search(int x, int y)
     return searchRec(this->root,p,0);
 }
 
+Node *KdTree::nearestNeighbor(int x, int y)
+{
+    Point p{x,y};
+    return nearestNeighborRec(this->root,p,0);
+}
+
 void KdTree::inorder()
 {
     inorderRec(this->root);
@@ -164,6 +170,113 @@ Node *KdTree::searchRec(Node *root, const Point &p, unsigned int depth)
     }
 }
 
+Node * KdTree::nearestNeighborRec(Node *root, const Point &queryPoint, unsigned int depth)
+{
+    //query point exist in the tree
+    if(queryPoint.x == root->point.x && queryPoint.y == root->point.y) return root;
+    //reaching a leaf node
+    if(!root->right && !root->left) return root;
+
+    bool splitByX = depth % 2 ==0;
+    Node *nearestNode = nullptr;
+    bool recursedLeft = false;
+    //recurse down to a leaf node
+    if(splitByX){
+        if(queryPoint.x < root->point.x) {
+            if(root->left){
+                nearestNode = nearestNeighborRec(root->left,queryPoint,depth+1);
+                recursedLeft = true;
+            }else{
+                 nearestNode = nearestNeighborRec(root->right,queryPoint,depth+1);
+            }
+
+        }else {
+            if(root->right){
+                 nearestNode = nearestNeighborRec(root->right,queryPoint,depth+1);
+            }else{
+                 nearestNode = nearestNeighborRec(root->left,queryPoint,depth+1);
+                 recursedLeft = true;
+            }
+
+
+        }
+
+    }else{
+
+        if(queryPoint.y < root->point.y) {
+            if(root->left){
+                 nearestNode = nearestNeighborRec(root->left,queryPoint,depth+1);
+                 recursedLeft = true;
+            }else{
+                 nearestNode = nearestNeighborRec(root->right,queryPoint,depth+1);
+            }
+
+        }else {
+            if(root->right){
+                 nearestNode = nearestNeighborRec(root->right,queryPoint,depth+1);
+            }else{
+                 nearestNode = nearestNeighborRec(root->left,queryPoint,depth+1);
+                 recursedLeft = true;
+            }
+
+
+        }
+
+    }
+    //check if root node is neareer than nearestNode
+    if(nearestNode && distance(root->point ,  queryPoint) < distance(nearestNode->point,queryPoint))
+        nearestNode = root;
+
+    //check for left or right subtree that may have potential for closer node
+    if(recursedLeft && root->right){
+
+        if(splitByX){
+             //check for the potential
+             if(nearestNode && distance(queryPoint,root->point.x , true) <  distance(nearestNode->point , queryPoint)){
+                Node *tempNearestNode = nearestNeighborRec(root->right,queryPoint,depth+1);
+                //replace if closer node is found
+                if(distance(tempNearestNode->point,queryPoint) < distance(nearestNode->point,queryPoint))
+                    nearestNode = tempNearestNode;
+             }
+
+        }else{
+             //check for the potential
+             if(nearestNode && distance(queryPoint,root->point.y , false) <  distance(nearestNode->point , queryPoint)){
+                Node *tempNearestNode = nearestNeighborRec(root->right,queryPoint,depth+1);
+                //replace if closer node is found
+                if(distance(tempNearestNode->point,queryPoint) < distance(nearestNode->point,queryPoint))
+                    nearestNode = tempNearestNode;
+             }
+        }
+
+    }else if(root->left){
+
+        if(splitByX){
+             //check for the potential
+             if(nearestNode && distance(queryPoint,root->point.x , true) <  distance(nearestNode->point , queryPoint)){
+                Node *tempNearestNode = nearestNeighborRec(root->left,queryPoint,depth+1);
+                //replace if closer node is found
+                if(distance(tempNearestNode->point,queryPoint) < distance(nearestNode->point,queryPoint))
+                    nearestNode = tempNearestNode;
+             }
+
+        }else{
+             //check for the potential
+             if(nearestNode && distance(queryPoint,root->point.y , false) <  distance(nearestNode->point , queryPoint)){
+                Node *tempNearestNode = nearestNeighborRec(root->left,queryPoint,depth+1);
+                //replace if closer node is found
+                if(distance(tempNearestNode->point,queryPoint) < distance(nearestNode->point,queryPoint))
+                    nearestNode = tempNearestNode;
+             }
+        }
+
+    }
+
+
+    return nearestNode;
+
+}
+
 void KdTree::inorderRec(Node *root)
 {
     if(root){
@@ -185,6 +298,19 @@ void KdTree::clearRec(Node *root)
 Node *KdTree::newNode(const Point &p)
 {
     return new Node(p);
+
+}
+
+int KdTree::distance(const Point &p1, const Point &p2)
+{
+    return ((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+
+}
+
+int KdTree::distance(const Point &p, int xy, bool inXaxis)
+{
+    if(inXaxis) return ((p.x - xy) * (p.x - xy));
+    else  return ((p.y - xy) * (p.y - xy));
 
 }
 
