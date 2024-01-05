@@ -1,5 +1,6 @@
 #ifndef KDTREE_H
 #define KDTREE_H
+#include <vector>
 
 struct Point {
     int x;
@@ -7,6 +8,29 @@ struct Point {
     bool operator==(Point const& p2) const { return this->x == p2.x && this->y == p2.y; }
 
 };
+struct Rectangle{
+    Rectangle(int x ,int y , int width, int height){
+        this->leftTopVertex.x = x;
+        this->leftTopVertex.y = y;
+        this->width = width;
+        this->height = height;
+
+    }
+    Point leftTopVertex;
+    int width;
+    int height;
+};
+
+struct Circle{
+    Circle(int x ,int y , int raduis){
+        this->centerVertex.x = x;
+        this->centerVertex.y = y;
+        this->raduis = raduis;
+    }
+    Point centerVertex;
+    int raduis;
+};
+
 class Node {
     friend class KdTree;
 public :
@@ -33,6 +57,8 @@ public:
     Node* findMin(bool inXaxis);
     Node *search(int x ,int y);
     Node *nearestNeighbor(int x , int y);
+    std::vector<Node *> searchArea(const Rectangle &area);
+    std::vector<Node *> searchArea(const Circle &area);
     void clear();
     void inorder();
 
@@ -42,6 +68,8 @@ private :
     Node * findMinRec(Node *root , bool inXaxis , unsigned int depth);
     Node * searchRec(Node *root , const Point &p , unsigned int depth);
     Node * nearestNeighborRec(Node *root,const Point &queryPoint,unsigned int depth);
+    void searchAreaRec(Node *root,const Rectangle &area , std::vector<Node *> &pts , unsigned int depth);
+    void searchAreaRec(Node *root,const Circle &area , std::vector<Node *> &pts , unsigned int depth);
     void inorderRec(Node *root);
     void clearRec(Node *root);
     Node *root;

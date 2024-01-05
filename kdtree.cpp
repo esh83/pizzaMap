@@ -46,6 +46,20 @@ Node *KdTree::nearestNeighbor(int x, int y)
     return nearestNeighborRec(this->root,p,0);
 }
 
+std::vector<Node *> KdTree::searchArea(const Rectangle &area)
+{
+    std::vector<Node *> pts;
+    searchAreaRec(this->root,area,pts,0);
+    return pts;
+}
+
+std::vector<Node *> KdTree::searchArea(const Circle &area)
+{
+    std::vector<Node *> pts;
+    searchAreaRec(this->root,area,pts,0);
+    return pts;
+}
+
 void KdTree::inorder()
 {
     inorderRec(this->root);
@@ -275,6 +289,60 @@ Node * KdTree::nearestNeighborRec(Node *root, const Point &queryPoint, unsigned 
 
     return nearestNode;
 
+}
+
+void KdTree::searchAreaRec(Node *root, const Rectangle &area, std::vector<Node *> &pts, unsigned int depth)
+{
+    if(!root) return;
+    bool splitByX = depth % 2 ==0;
+    bool isInArea = (root->point.x  > area.leftTopVertex.x) && (root->point.x  < area.leftTopVertex.x + area.width) && (root->point.y  < area.leftTopVertex.y) && (root->point.y  > area.leftTopVertex.y - area.height);
+    if(isInArea) pts.push_back(root);
+    if(splitByX){
+        bool hasRightIntersect = (area.leftTopVertex.x + area.width) > root->point.x;
+        bool hasLeftIntersect = area.leftTopVertex.x < root->point.x;
+        if(hasRightIntersect){
+             searchAreaRec(root->right,area,pts,depth+1);
+        }
+        if(hasLeftIntersect){
+             searchAreaRec(root->left,area,pts,depth+1);
+        }
+    }else{
+        bool hasTopIntersect = area.leftTopVertex.y > root->point.y;
+        bool hasBottomIntersect = (area.leftTopVertex.y - area.height) < root->point.y;
+        if(hasTopIntersect){
+             searchAreaRec(root->right,area,pts,depth+1);
+        }
+        if(hasBottomIntersect){
+             searchAreaRec(root->left,area,pts,depth+1);
+        }
+    }
+}
+
+void KdTree::searchAreaRec(Node *root, const Circle &area, std::vector<Node *> &pts, unsigned int depth)
+{
+    if(!root) return;
+    bool splitByX = depth % 2 ==0;
+    bool isInArea = ((root->point.x - area.centerVertex.x) * (root->point.x - area.centerVertex.x) + (root->point.y - area.centerVertex.y) * (root->point.y - area.centerVertex.y)) < area.raduis * area.raduis;
+    if(isInArea) pts.push_back(root);
+    if(splitByX){
+        bool hasRightIntersect = (area.centerVertex.x + area.raduis) > root->point.x;
+        bool hasLeftIntersect = (area.centerVertex.x - area.raduis) < root->point.x;
+        if(hasRightIntersect){
+             searchAreaRec(root->right,area,pts,depth+1);
+        }
+        if(hasLeftIntersect){
+             searchAreaRec(root->left,area,pts,depth+1);
+        }
+    }else{
+        bool hasTopIntersect = (area.centerVertex.y + area.raduis) > root->point.y;
+        bool hasBottomIntersect = (area.centerVertex.y - area.raduis) < root->point.y;
+        if(hasTopIntersect){
+             searchAreaRec(root->right,area,pts,depth+1);
+        }
+        if(hasBottomIntersect){
+             searchAreaRec(root->left,area,pts,depth+1);
+        }
+    }
 }
 
 void KdTree::inorderRec(Node *root)
