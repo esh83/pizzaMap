@@ -26,11 +26,10 @@ class KdTree
 public:
     KdTree();
     ~KdTree();
-    void insert(const Point &p);
     void insert(int x , int y);
-    void remove(const Point &p);
     void remove(int x ,int y);
     Node* findMin(bool inXaxis);
+    Node *search(int x ,int y);
     void clear();
     void inorder();
 
@@ -38,6 +37,7 @@ private :
     Node * insertRec(Node *root,const Point &p , unsigned int depth);
     Node * removeRec(Node *root ,const Point &p , unsigned int depth);
     Node * findMinRec(Node *root , bool inXaxis , unsigned int depth);
+    Node * searchRec(Node *root , const Point &p , unsigned int depth);
     void inorderRec(Node *root);
     void clearRec(Node *root);
     Node *root;

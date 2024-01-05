@@ -11,11 +11,7 @@ KdTree::~KdTree()
     clear();
 }
 
-void KdTree::insert(const Point &p)
-{
-    this->root = insertRec(this->root,p,0);
-    //std::cout << "new node inserted : ( " << p.x << " , " << p.y << " )" << std::endl;
-}
+
 
 void KdTree::insert(int x, int y)
 {
@@ -24,22 +20,24 @@ void KdTree::insert(int x, int y)
     //std::cout << "new node inserted : ( " << p.x << " , " << p.y << " )" << std::endl;
 }
 
-void KdTree::remove(const Point &p)
-{
-    this->root = removeRec(this->root,p,0);
-    std::cout << "node removed : ( " << p.x << " , " << p.y << " )" << std::endl;
-}
+
 
 void KdTree::remove(int x, int y)
 {
     Point p{x,y};
     this->root = removeRec(this->root,p,0);
-    std::cout << "node removed : ( " << p.x << " , " << p.y << " )" << std::endl;
+    //std::cout << "node removed : ( " << p.x << " , " << p.y << " )" << std::endl;
 }
 
 Node *KdTree::findMin(bool inXaxis)
 {
     return  findMinRec(this->root,inXaxis , 0);
+}
+
+Node *KdTree::search(int x, int y)
+{
+    Point p{x,y};
+    return searchRec(this->root,p,0);
 }
 
 void KdTree::inorder()
@@ -145,6 +143,24 @@ Node *KdTree::findMinRec(Node *root, bool inXaxis, unsigned int depth)
                 currentMin = minRight;
         }
         return currentMin;
+    }
+}
+
+Node *KdTree::searchRec(Node *root, const Point &p, unsigned int depth)
+{
+    if(!root) return nullptr;
+    if(root->point.x == p.x && root->point.y == p.y) return root;
+    bool splitByX = depth % 2 ==0;
+    if(splitByX){
+        if(p.x > root->point.x)
+            return searchRec(root->right,p,depth+1);
+        else
+            return searchRec(root->left,p,depth+1);
+    }else{
+        if(p.y > root->point.y)
+            return searchRec(root->right,p,depth+1);
+        else
+            return searchRec(root->left,p,depth+1);
     }
 }
 
