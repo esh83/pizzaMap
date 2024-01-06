@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(pizzaMap main.cpp
-    kdtree.h kdtree.cpp)
+    kdtree.h kdtree.cpp
+    hashtable.h hashtable.cpp)
 
 include(GNUInstallDirs)
 install(TARGETS pizzaMap
