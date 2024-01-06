@@ -6,14 +6,16 @@
 class Node {
     friend class KdTree;
 public :
-    Node(const Point &p){
+    Node(const Point &p , const std::string & shopN){
         this->point.x = p.x;
         this->point.y = p.y;
+        this->shopName = shopN;
         this->left = nullptr;
         this->right = nullptr;
     }
     //private :
     Point point;
+    std::string shopName;
     Node * left;
     Node * right;
 
@@ -24,7 +26,7 @@ class KdTree
 public:
     KdTree();
     ~KdTree();
-    void insert(int x , int y);
+    void insert(int x , int y  ,const std::string& shopN);
     void remove(int x ,int y);
     Node* findMin(bool inXaxis);
     Node *search(int x ,int y);
@@ -35,7 +37,7 @@ public:
     void inorder();
 
 private :
-    Node * insertRec(Node *root,const Point &p , unsigned int depth);
+    Node * insertRec(Node *root,const Point &p ,const std::string& shopN, unsigned int depth);
     Node * removeRec(Node *root ,const Point &p , unsigned int depth);
     Node * findMinRec(Node *root , bool inXaxis , unsigned int depth);
     Node * searchRec(Node *root , const Point &p , unsigned int depth);
@@ -45,7 +47,7 @@ private :
     void inorderRec(Node *root);
     void clearRec(Node *root);
     Node *root;
-    static Node* newNode(const Point &p);
+    static Node* newNode(const Point &p ,  const std::string &shopN);
     static int distance(const Point &p1,const Point &p2);
     static int distance(const Point &p , int xy, bool inXaxis);
 };

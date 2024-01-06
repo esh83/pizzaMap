@@ -13,10 +13,10 @@ KdTree::~KdTree()
 
 
 
-void KdTree::insert(int x, int y)
+void KdTree::insert(int x, int y  ,const std::string& shopName)
 {
     Point p{x,y};
-    this->root = insertRec(this->root,p,0);
+    this->root = insertRec(this->root,p , shopName,0);
     //std::cout << "new node inserted : ( " << p.x << " , " << p.y << " )" << std::endl;
 }
 
@@ -70,24 +70,24 @@ void KdTree::clear()
     clearRec(this->root);
 }
 
-Node* KdTree::insertRec(Node *root, const Point &p , unsigned int depth)
+Node* KdTree::insertRec(Node *root, const Point &p ,const std::string& shopN, unsigned int depth)
 {
     //depth starting from 0 and even depths 0,2,4,... are splitted using X axis , others using Y
 
-    if(root == nullptr) return newNode(p);
+    if(root == nullptr) return newNode(p , shopN);
 
     bool splitByX = depth %2 ==0;
     if(splitByX){
         if(p.x > root->point.x)
-            root->right = insertRec(root->right , p , depth +1);
+            root->right = insertRec(root->right , p ,shopN , depth +1);
         else
-            root->left = insertRec(root->left , p, depth +1);
+            root->left = insertRec(root->left , p,shopN, depth +1);
     }
     else {
         if(p.y > root->point.y)
-            root->right = insertRec(root->right , p , depth +1);
+            root->right = insertRec(root->right , p ,shopN, depth +1);
         else
-            root->left = insertRec(root->left , p, depth +1);
+            root->left = insertRec(root->left , p,shopN, depth +1);
     }
     return root;
 }
@@ -363,9 +363,9 @@ void KdTree::clearRec(Node *root)
     }
 }
 
-Node *KdTree::newNode(const Point &p)
+Node *KdTree::newNode(const Point &p , const std::string &shopN)
 {
-    return new Node(p);
+    return new Node(p ,shopN);
 
 }
 

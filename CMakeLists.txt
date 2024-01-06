@@ -9,6 +9,7 @@ add_executable(pizzaMap main.cpp
     kdtree.h kdtree.cpp
     hashtable.h hashtable.cpp
     schemma.h
+    application.h application.cpp
 )
 
 include(GNUInstallDirs)
