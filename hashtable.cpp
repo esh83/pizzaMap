@@ -11,8 +11,8 @@ unsigned int defaultHasher(const std::string &key) {
     return index;
 }
 }
-
-HashTable::HashTable()
+template <typename T>
+HashTable<T>::HashTable()
     : hasher{defaultHasher},
     buckets{new Node*[INITIAL_BUCKET_COUNT]},
     numBuckets{INITIAL_BUCKET_COUNT}, numItems{0}
@@ -23,8 +23,8 @@ HashTable::HashTable()
     }
 
 }
-
-HashTable::HashTable(HashFunction hasher)
+template <typename T>
+HashTable<T>::HashTable(HashFunction hasher)
     : hasher{hasher},
     buckets{new Node*[INITIAL_BUCKET_COUNT]}, numBuckets{INITIAL_BUCKET_COUNT}
 {
@@ -34,7 +34,8 @@ HashTable::HashTable(HashFunction hasher)
     }
 }
 
-HashTable::HashTable(const HashTable& hm)
+template <typename T>
+HashTable<T>::HashTable(const HashTable& hm)
     : hasher{hm.hasher}, buckets{new Node*[hm.numBuckets]},
     numBuckets{hm.numBuckets}, numItems{hm.numItems}
 {
@@ -46,8 +47,8 @@ HashTable::HashTable(const HashTable& hm)
 }
 
 
-
-HashTable::~HashTable() {
+template <typename T>
+HashTable<T>::~HashTable() {
     for (unsigned int i = 0; i < numBuckets; i++) {
         Node *currentNode = buckets[i];
 
@@ -63,13 +64,13 @@ HashTable::~HashTable() {
     delete[] buckets;
 }
 
-
-HashTable& HashTable::operator=(const HashTable& hm){
+template <typename T>
+HashTable<T>& HashTable<T>::operator=(const HashTable<T>& hm){
     if (this != &hm){
         Node** newBuckets = new Node*[hm.numBuckets];
 
         copyBuckets(hm.buckets, newBuckets, hm.numBuckets);
-        this->~HashTable();
+        this->~HashTable<T>();
         numBuckets = hm.numBuckets;
         numItems = hm.numItems;
 
@@ -79,8 +80,8 @@ HashTable& HashTable::operator=(const HashTable& hm){
     return *this;
 }
 
-
-void HashTable::add(const std::string& key, const std::string& value){
+template <typename T>
+void HashTable<T>::add(const std::string& key, const T & value){
 
     if((float)(numItems) / numBuckets > 0.8){
         unsigned int const oldNumBuckets = numBuckets;
@@ -141,7 +142,8 @@ void HashTable::add(const std::string& key, const std::string& value){
 
 }
 
-void HashTable::remove(const std::string& key){
+template <typename T>
+void HashTable<T>::remove(const std::string& key){
     unsigned int bucketIndex = hasher(key) % numBuckets;
 
     Node* currentNode = buckets[bucketIndex];
@@ -178,7 +180,8 @@ void HashTable::remove(const std::string& key){
 
 }
 
-bool HashTable::contains(const std::string& key) const{
+template <typename T>
+bool HashTable<T>::contains(const std::string& key) const{
     unsigned int bucketIndex = hasher(key) % numBuckets;
 
     Node* currentNode = buckets[bucketIndex];
@@ -193,7 +196,8 @@ bool HashTable::contains(const std::string& key) const{
     return false;
 }
 
-std::string HashTable::value(const std::string& key) const{
+template <typename T>
+T HashTable<T>::value(const std::string& key) const{
     unsigned int bucketIndex = hasher(key) % numBuckets;
     Node* currentNode = buckets[bucketIndex];
 
@@ -204,18 +208,21 @@ std::string HashTable::value(const std::string& key) const{
         currentNode = currentNode->next;
     }
 
-    return std::string("No value matching given key!");
+    throw "not found";
 }
 
-unsigned int HashTable::size() const{
+template <typename T>
+unsigned int HashTable<T>::size() const{
     return numItems;
 }
 
-unsigned int HashTable::bucketCount() const{
+template <typename T>
+unsigned int HashTable<T>::bucketCount() const{
     return numBuckets;
 }
 
-unsigned int HashTable::maxBucketSize() const{
+template <typename T>
+unsigned int HashTable<T>::maxBucketSize() const{
     // maxBucketSize() returns the number of key/value pairs stored in this
     // HashTable's largest bucket.
     unsigned int largestBucketSize = 0;
@@ -239,12 +246,13 @@ unsigned int HashTable::maxBucketSize() const{
 
 };
 
-double HashTable::loadFactor() const{
+template <typename T>
+double HashTable<T>::loadFactor() const{
     return (float) numItems / numBuckets;
 }
 
-
-void HashTable::copyBuckets(Node** source, Node** destination, unsigned int size){
+template <typename T>
+void HashTable<T>::copyBuckets(Node** source, Node** destination, unsigned int size){
     for(unsigned int i = 0; i < size; i++){
         Node* current = source[i];
 
@@ -269,7 +277,8 @@ void HashTable::copyBuckets(Node** source, Node** destination, unsigned int size
     }
 }
 
-void HashTable::rebuildMap(Node** oldBuckets, unsigned int oldNumBuckets) {
+template <typename T>
+void HashTable<T>::rebuildMap(Node** oldBuckets, unsigned int oldNumBuckets) {
     for (unsigned int i = 0; i < oldNumBuckets; i++) {
         Node *currentNode = oldBuckets[i];
 
@@ -290,9 +299,46 @@ void HashTable::rebuildMap(Node** oldBuckets, unsigned int oldNumBuckets) {
 
 }
 
+#include "schemma.h"
+#include <iostream>
 
 
-void HashTable::printSelf() {
+std::ostream& operator<<(std::ostream& os, const Point& pt)
+{
+    os << "( " << pt.x << " ," << pt.y << " )";
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const Rectangle& rect)
+{
+    os << "rectangle left top vertex : " << rect.leftTopVertex << " width : " << rect.width << " height : " << rect.height;
+    return os;
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Circle& circ)
+{
+    os << "circle center vertex : " << circ.centerVertex << " radius : " << circ.centerVertex;
+    return os;
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Shop& sh)
+{
+    os << "shop name : " << sh.name << " at coordinate : " << sh.coordinate;
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const NeighborHood& nb)
+{
+    os << "neighborhood name : " << nb.name << " at area : " << nb.area;
+    return os;
+}
+
+
+
+template <typename T>
+void HashTable<T>::printSelf() {
     for(int i = 0; i < numBuckets; i++){
         Node *currentNode = buckets[i];
         std::cout << "Index: " << i << " ";
@@ -305,3 +351,8 @@ void HashTable::printSelf() {
 
     }
 }
+
+template class HashTable<int>;
+template class HashTable<std::string>;
+template class HashTable<Shop>;
+template class HashTable<NeighborHood>;

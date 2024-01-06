@@ -1,35 +1,7 @@
 #ifndef KDTREE_H
 #define KDTREE_H
 #include <vector>
-
-struct Point {
-    int x;
-    int y;
-    bool operator==(Point const& p2) const { return this->x == p2.x && this->y == p2.y; }
-
-};
-struct Rectangle{
-    Rectangle(int x ,int y , int width, int height){
-        this->leftTopVertex.x = x;
-        this->leftTopVertex.y = y;
-        this->width = width;
-        this->height = height;
-
-    }
-    Point leftTopVertex;
-    int width;
-    int height;
-};
-
-struct Circle{
-    Circle(int x ,int y , int raduis){
-        this->centerVertex.x = x;
-        this->centerVertex.y = y;
-        this->raduis = raduis;
-    }
-    Point centerVertex;
-    int raduis;
-};
+#include "schemma.h"
 
 class Node {
     friend class KdTree;
@@ -40,7 +12,7 @@ public :
         this->left = nullptr;
         this->right = nullptr;
     }
-//private :
+    //private :
     Point point;
     Node * left;
     Node * right;

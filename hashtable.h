@@ -2,8 +2,9 @@
 #define HASHTABLE_H
 #include <string>
 #include <functional>
+#include "schemma.h"
 
-
+template <typename T>
 class HashTable
 {
 
@@ -20,10 +21,10 @@ class HashTable
         HashTable(const HashTable& hm);
         ~HashTable();
         HashTable& operator=(const HashTable& hm);
-        void add(const std::string& key, const std::string& value);
+        void add(const std::string& key, const T& value);
         void remove(const std::string& key);
         bool contains(const std::string& key) const;
-        std::string value(const std::string& key) const;
+        T value(const std::string& key) const;
         unsigned int size() const;
         unsigned int bucketCount() const;
         double loadFactor() const;
@@ -34,7 +35,7 @@ class HashTable
         struct Node
         {
             std::string key;
-            std::string value;
+            T value;
             Node* next;
         };
 
