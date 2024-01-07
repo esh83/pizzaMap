@@ -2,6 +2,7 @@
 #define SCHEMMA_H
 #include <string>
 #include <vector>
+#include <iostream>
 
 struct Point {
     int x;
@@ -58,6 +59,44 @@ struct NeighborHood{
     std::string name;
 };
 
+
+
+inline std::ostream& operator<<(std::ostream& os, const Point& pt)
+{
+    os << "( " << pt.x << " ," << pt.y << " )";
+    return os;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const Rectangle& rect)
+{
+    os << "rectangle left top vertex : " << rect.leftTopVertex << " width : " << rect.width << " height : " << rect.height;
+    return os;
+}
+
+
+inline std::ostream& operator<<(std::ostream& os, const Circle& circ)
+{
+    os << "circle center vertex : " << circ.centerVertex << " radius : " << circ.centerVertex;
+    return os;
+}
+
+
+inline std::ostream& operator<<(std::ostream& os, const Shop& sh)
+{
+    os << "*******************************************************************\n";
+    os << "shop name : " << sh.name << " at coordinate : " << sh.coordinate << "\n";
+    os << "is primary : " << sh.isPrimary << " primary shop name : " << sh.PrimaryName << "\n";
+    os << "branches shop names : ";
+    for(const auto &s:sh.branches) os << s.name << ",";
+    os << "\n";
+    return os;
+}
+
+inline std::ostream& operator<<(std::ostream& os, const NeighborHood& nb)
+{
+    os << "neighborhood name : " << nb.name << " at area : " << nb.area;
+    return os;
+}
 
 
 #endif // SCHEMMA_H

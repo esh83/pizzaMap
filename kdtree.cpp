@@ -106,6 +106,7 @@ Node *KdTree::removeRec(Node *root, const Point &p, unsigned int depth)
             // Copy the minimum to root
             root->point.x = min->point.x;
             root->point.y = min->point.y;
+            root->shopName = min->shopName;
 
             root->right = removeRec(root->right, min->point, depth+1);
         }
@@ -114,6 +115,7 @@ Node *KdTree::removeRec(Node *root, const Point &p, unsigned int depth)
             Node *min = findMinRec(root->left, splitByX,depth+1);
             root->point.x = min->point.x;
             root->point.y = min->point.y;
+              root->shopName = min->shopName;
             root->right = removeRec(root->left, min->point, depth+1);
             root->left = nullptr;
         }

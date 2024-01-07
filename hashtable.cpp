@@ -152,6 +152,9 @@ void HashTable<T>::remove(const std::string& key){
     //If currentNode->next points to  value matching key, then delete it. and change
     //current Node's next to next next
 
+    if (!currentNode) {
+        return;  // Nothing to remove
+    }
     //If first node contains key
     if(currentNode->key == key){
         delete currentNode;
@@ -197,7 +200,7 @@ bool HashTable<T>::contains(const std::string& key) const{
 }
 
 template <typename T>
-T HashTable<T>::value(const std::string& key) const{
+T& HashTable<T>::value(const std::string& key) const{
     unsigned int bucketIndex = hasher(key) % numBuckets;
     Node* currentNode = buckets[bucketIndex];
 
@@ -299,41 +302,6 @@ void HashTable<T>::rebuildMap(Node** oldBuckets, unsigned int oldNumBuckets) {
 
 }
 
-#include "schemma.h"
-#include <iostream>
-
-
-std::ostream& operator<<(std::ostream& os, const Point& pt)
-{
-    os << "( " << pt.x << " ," << pt.y << " )";
-    return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const Rectangle& rect)
-{
-    os << "rectangle left top vertex : " << rect.leftTopVertex << " width : " << rect.width << " height : " << rect.height;
-    return os;
-}
-
-
-std::ostream& operator<<(std::ostream& os, const Circle& circ)
-{
-    os << "circle center vertex : " << circ.centerVertex << " radius : " << circ.centerVertex;
-    return os;
-}
-
-
-std::ostream& operator<<(std::ostream& os, const Shop& sh)
-{
-    os << "shop name : " << sh.name << " at coordinate : " << sh.coordinate;
-    return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const NeighborHood& nb)
-{
-    os << "neighborhood name : " << nb.name << " at area : " << nb.area;
-    return os;
-}
 
 
 
@@ -351,6 +319,23 @@ void HashTable<T>::printSelf() {
 
     }
 }
+
+template<typename T>
+std::vector<T> HashTable<T>::getAsList()
+{
+    std::vector<T> temp;
+    for(int i = 0; i < numBuckets; i++){
+        Node *currentNode = buckets[i];
+        while(currentNode != nullptr){
+            temp.push_back(currentNode->value);
+                currentNode = currentNode->next;
+        }
+    }
+    return temp;
+}
+
+
+
 
 template class HashTable<int>;
 template class HashTable<std::string>;
