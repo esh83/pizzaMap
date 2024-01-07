@@ -244,6 +244,7 @@ void Application::nearestBrShop()
         return;
     }
     KdTree tempTree;
+    tempTree.insert(s.coordinate.x,s.coordinate.y,s.name);
     for(const auto& bs : s.branches){
         tempTree.insert(bs.coordinate.x,bs.coordinate.y,bs.name);
     }
